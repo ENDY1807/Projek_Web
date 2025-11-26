@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Harian</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        .absen-container {
+            max-width: 900px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .absen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .absen-header h2 {
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            border-bottom: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        table th {
+            background: #0066cc;
+            color: #fff;
+        }
+
+        .btn-simpan {
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: #0066cc;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-simpan:hover {
+            background: #004a99;
+        }
+    </style>
+</head>
+
+<body>
+        <header class="dashboard-header">
+            <div class="header-left">
+                <img src="assets/absensi.png" alt="Logo Absensi" class="logo">
+                <h1>Absensi Kelas</h1>
+            </div>
+            <div class="header-right">
+                <span id="greeting" class="greeting"></span>
+                <button id="logoutBtn" class="btn-secondary">Keluar</button>
+            </div>
+        </header>
+        <nav class="dashboard-nav">
+            <ul>
+                <li><a href="dashboard.html" class="nav-link active">Dashboard</a></li>
+                <li><a href="absen.html" class="nav-link">Absensi Harian</a></li>
+                <li><a href="rekap.html" class="nav-link">Rekap Absen</a></li>
+                <li><a href="datasiswa.php" class="nav-link">Data Siswa</a></li>
+                <li><a href="datakelas.php" class="nav-link">Data Kelas</a></li>
+                <li class="dropdown">
+                    <a href="#" class="nav-link">Laporan</a>
+                    <div class="dropdown-content">
+                        <a href="laporan_harian.html">Laporan Harian</a>
+                        <a href="laporan_bulanan.html">Laporan Bulanan</a>
+                    </div>
+                </li>
+                <li><a href="histori.html" class="nav-link">Histori Absensi</a></li>
+            </ul>
+        </nav>
+
+    <div class="absen-container">
+
+        <div class="absen-header">
+            <h2>Absensi Harian</h2>
+            <input type="date" id="tanggalAbsen" class="input-date">
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Siswa</th>
+                    <th>Hadir</th>
+                    <th>Izin</th>
+                    <th>Sakit</th>
+                    <th>Alpha</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabelSiswa">
+            </tbody>
+        </table>
+
+        <button class="btn-simpan" onclick="simpanAbsensi()">Simpan Absensi</button>
+
+    </div>
+
+    <script>
+        const dataSiswa = [
+            { id: 1, nama: "Endy Mahavira" },
+            { id: 2, nama: "Muhammad Nazril" },
+            { id: 3, nama: "Dian Pratama" }
+        ];
+        function loadSiswa() {
+            const tabel = document.getElementById("tabelSiswa");
+            tabel.innerHTML = "";
+
+            dataSiswa.forEach((siswa, i) => {
+                tabel.innerHTML += `
+                    <tr>
+                        <td>${i + 1}</td>
+                        <td>${siswa.nama}</td>
+
+                        <td><input type="radio" name="status_${siswa.id}" value="Hadir"></td>
+                        <td><input type="radio" name="status_${siswa.id}" value="Izin"></td>
+                        <td><input type="radio" name="status_${siswa.id}" value="Sakit"></td>
+                        <td><input type="radio" name="status_${siswa.id}" value="Alfa"></td>
+                    </tr>
+                `;
+            });
+        }
+
+        loadSiswa();
+        function simpanAbsensi() {
+            const tanggal = document.getElementById("tanggalAbsen").value;
+            if (!tanggal) {
+                alert("Pilih tanggal dulu!");
+                return;
+            }
+
+            let hasilAbsen = [];
+
+            dataSiswa.forEach(siswa => {
+                let status = document.querySelector(`input[name="status_${siswa.id}"]:checked`);
+
+                hasilAbsen.push({
+                    id: siswa.id,
+                    nama: siswa.nama,
+                    status: status ? status.value : "Belum Diisi"
+                });
+            });
+
+            console.log("Data Absensi:", hasilAbsen);
+
+            alert("Absensi berhasil disimpan!");
+
+            localStorage.setItem("absensi_" + tanggal, JSON.stringify(hasilAbsen));
+        }
+    </script>
+
+</body>
+</html>
